@@ -31,7 +31,7 @@ class YAPAF {
 		foreach (explode(':', get_include_path()) as $classFolderPath) {
 			$pathToFile = $classFolderPath . DIRECTORY_SEPARATOR . $class . '.php';
 			if (file_exists($pathToFile)) {
-				require self::PROTOCOLL . '://' . $pathToFile;
+				require_once self::PROTOCOLL . '://' . $pathToFile;
 			}
 		}
 	}
