@@ -27,6 +27,7 @@ class YAPAF {
 	 * @param String $class
 	 */
 	private static function yapaf_autoload($class) {
+		$class = str_replace('_', '/', $class);
 		foreach (explode(':', get_include_path()) as $classFolderPath) {
 			$pathToFile = $classFolderPath . DIRECTORY_SEPARATOR . $class . '.php';
 			if (file_exists($pathToFile)) {

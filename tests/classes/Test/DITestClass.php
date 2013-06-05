@@ -1,6 +1,6 @@
 <?php
 
-class DITestClass {
+class Test_DITestClass {
 
 	/**
 	 * @var stdClass

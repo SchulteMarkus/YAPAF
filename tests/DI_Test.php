@@ -16,7 +16,7 @@ class DI_Test extends PHPUnit_Framework_TestCase {
 	public function di_disapprove() {
 		spl_autoload_register('usual_autoload');
 
-		$obj = new DITestClass();
+		$obj = new Test_DITestClass();
 		$this->assertNull($obj->getVar());
 	}
 
@@ -28,7 +28,7 @@ class DI_Test extends PHPUnit_Framework_TestCase {
 		require_once('aspects/DI_Aspect.php');
 		YAPAF::init(array(new DI_Aspect()));
 
-		$obj = new DITestClass();
+		$obj = new Test_DITestClass();
 		$this->assertInstanceOf('stdClass', $obj->getVar());
 	}
 }
