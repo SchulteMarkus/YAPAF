@@ -1,8 +1,4 @@
 <?php
-
-	if (!defined('T_NAMESPACE'))
-		define('T_NAMESPACE', 377);
-	
 	class DocComment {
 		private static $classes = array();
 		private static $methods = array();
@@ -57,7 +53,6 @@
 			$tokens = $this->getTokens($file);
 			$currentClass = false;
 			$currentBlock = false;
-			$namespace = null;
 			$max = count($tokens);
 			$i = 0;
 			while($i < $max) {
@@ -65,17 +60,12 @@
 				if(is_array($token)) {
 					list($code, $value) = $token;
 					switch($code) {
-						case T_NAMESPACE:
-							$namespace = $this->getString($tokens, $i, $max).'\\';
-							break;
-						
 						case T_DOC_COMMENT: 
 							$comment = $value; 
 							break;
 						
 						case T_CLASS: 
-						case T_INTERFACE:
-							$class = $namespace.$this->getString($tokens, $i, $max);
+							$class = $this->getString($tokens, $i, $max);
 							if($comment !== false) {
 								self::$classes[$class] = $comment;
 								$comment = false;

@@ -116,7 +116,7 @@
 			$annotations = array();
 			$annotation_matcher = new AnnotationMatcher;
 			while(true) {
-				if(preg_match('/[\*\s](?=@)/', $string, $matches, PREG_OFFSET_CAPTURE)) {
+				if(preg_match('/\s(?=@)/', $string, $matches, PREG_OFFSET_CAPTURE)) {
 					$offset = $matches[0][1] + 1;
 					$string = substr($string, $offset);
 				}  else {
@@ -134,7 +134,7 @@
 	class AnnotationMatcher extends SerialMatcher {
 		protected function build() {
 			$this->add(new RegexMatcher('@'));
-			$this->add(new RegexMatcher('[A-Z][a-zA-Z0-9_\\\\]*'));
+			$this->add(new RegexMatcher('[A-Z][a-zA-Z0-9_]*'));
 			$this->add(new AnnotationParametersMatcher);
 		}
 
