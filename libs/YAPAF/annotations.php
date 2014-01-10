@@ -157,3 +157,63 @@ class Call extends ClassPropertyJoinPoint {
 		return $matches;
 	}
 }
+
+class ChangeClassConstantValue extends Annotation {
+
+	/**
+	 * @var String
+	 */
+	public $class;
+
+	/**
+	 * @var String
+	 */
+	public $constant;
+
+	/**
+	 * @var String
+	 */
+	public $value;
+
+	/**
+	 * @param array $tokens
+	 * @return multitype:PHP_Token
+	 */
+	public function getMatchingTokens(array $tokens) {
+		$matches = array();
+
+		$actClass = '';
+		foreach ($tokens as $key => $token) {
+			if ($token instanceof PHP_Token_Class) {
+				$actClass = $token->getName();
+			}
+
+			if ($actClass === $this->class &&
+				$token instanceof PHP_Token_CONST) {
+				$constNameToken = $this->_getNextToken($key, PHP_Token_STRING, $tokens);
+				if ((String)$constNameToken === $this->constant) {
+					$matches[] = $this->_getNextToken($key, PHP_Token_SEMICOLON, $tokens);
+				}
+			}
+		}
+
+		return $matches;
+	}
+
+	/**
+	 * @param $key
+	 * @param $type
+	 * @param array $tokens
+	 * @return PHP_Token
+	 */
+	private function _getNextToken($key, $type, array $tokens) {
+		do {
+			$token = $tokens[$key++];
+			if ($token instanceof $type) {
+				return $token;
+			}
+		} while ($key < count($tokens));
+
+		return null;
+	}
+}

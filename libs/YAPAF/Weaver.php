@@ -22,6 +22,14 @@ class YAPAF_Weaver extends PHP_Token_Stream {
 		foreach (self::$_aspects as $aspect) {
 			$aspectReflected = new ReflectionAnnotatedClass($aspect);
 			foreach ($aspectReflected->getMethods() as $aspectMethodReflected) {
+				$aspectsJoinpoints = $aspectMethodReflected->getAllAnnotations('ChangeClassConstantValue');
+				foreach ($aspectsJoinpoints as $joinpoint) {
+					$tokens = $joinpoint->getMatchingTokens($this->tokens);
+					foreach ($tokens as $token) {
+						$this->changeClassConstantValue($token, $joinpoint);
+					}
+				}
+
 				$aspectsJoinpoints = $aspectMethodReflected->getAllAnnotations('Call');
 				foreach ($aspectsJoinpoints as $joinpoint) {
 					$tokens = $joinpoint->getMatchingTokens($this->tokens);
@@ -48,11 +56,8 @@ class YAPAF_Weaver extends PHP_Token_Stream {
 			}
 		}
 
-		#$this->addFunction('My_SomeClass', 'echoSth', 'echo "blabla\n";');
-
 		$this->parse();
 
-		#var_dump((String)$this); ob_flush();
 		return (String)$this;
 	}
 
@@ -142,6 +147,25 @@ class YAPAF_Weaver extends PHP_Token_Stream {
 		$tokenStream = new parent($methodBody);
 
 		array_splice($this->tokens, array_search($token, $this->tokens) + 1, 0, $tokenStream->tokens());
+	}
+
+	/**
+	 * @param PHP_Token_SEMICOLON $token
+	 * @param ChangeClassConstantValue $joinpoint
+	 */
+	private function changeClassConstantValue(PHP_Token_SEMICOLON $token, ChangeClassConstantValue $joinpoint) {
+		$newConstantValue = $joinpoint->value;
+		$source = is_numeric($newConstantValue) ? $newConstantValue + 0 : $newConstantValue;
+		$tokenStream = new parent('=' . $source . ';');
+
+		$tokenEndKey = array_search($token, $this->tokens);
+		$tokenStartKey = $tokenEndKey - 1;
+
+		do {
+			$token = $this->tokens[$tokenStartKey--];
+		} while (!($token instanceof PHP_Token_EQUAL));
+
+		array_splice($this->tokens, $tokenStartKey + 1, $tokenEndKey - $tokenStartKey, $tokenStream->tokens());
 	}
 
 	/**

@@ -2,6 +2,8 @@
 
 class TestClass {
 
+	const SOME_CONST = 'a constant';
+
 	/**
 	 * @var mixed
 	 */
