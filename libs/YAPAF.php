@@ -17,14 +17,8 @@ class YAPAF {
 	public static function init(array $aspects = array()) {
 		YAPAF_Weaver::setAspects($aspects);
 		
-		// unregister each other autoloader.
-		$functions = spl_autoload_functions();
-		foreach ($functions as $function) {
-			spl_autoload_unregister($function);
-		}
-
-		stream_wrapper_register(self::PROTOCOLL, 'YAPAF_StreamWrapper');
-		spl_autoload_register(array('YAPAF', 'yapaf_autoload'));
+		assert(stream_wrapper_register(self::PROTOCOLL, 'YAPAF_StreamWrapper'));
+		assert(spl_autoload_register(array('YAPAF', 'yapaf_autoload'), true, true));
 	}
 
 	/**
